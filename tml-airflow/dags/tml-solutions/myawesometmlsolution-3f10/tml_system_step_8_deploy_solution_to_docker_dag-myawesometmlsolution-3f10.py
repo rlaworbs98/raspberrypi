@@ -7,7 +7,7 @@ import os
 import subprocess
 import tsslogging
 import git
-
+import time
 import sys
 
 sys.dont_write_bytecode = True
@@ -65,11 +65,11 @@ def dockerit(**context):
        key = "trigger-{}".format(sname)
        os.environ[key] = sd
        if os.environ['TSS'] == "1": 
-         print("[INFO] docker commit {} {} - message={}".format(cid,cname,v))  
+         print("[INFO] docker commit {} {} ".format(cid,cname))  
          subprocess.call("docker rmi -f $(docker images --filter 'dangling=true' -q --no-trunc)", shell=True)
          cbuf="docker commit {} {}".format(cid,cname)
          v=subprocess.call("docker commit {} {}".format(cid,cname), shell=True)
-         time.sleep(7)    
+         time.sleep(20)    
          if v != 0:   
            tsslogging.locallogs("WARN", "STEP 8: There seems to be an issue creating the container.  Here is the commit command: {} - message={}.  Container may NOT pushed.".format(cbuf,v)) 
          else:

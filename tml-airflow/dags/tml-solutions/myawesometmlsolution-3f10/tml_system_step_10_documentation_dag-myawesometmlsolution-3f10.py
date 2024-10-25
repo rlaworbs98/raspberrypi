@@ -11,7 +11,7 @@ import subprocess
 import tsslogging
 import shutil
 from git import Repo
-
+import time
 sys.dont_write_bytecode = True
 
 ######################################################USER CHOSEN PARAMETERS ###########################################################
@@ -656,6 +656,7 @@ def generatedoc(**context):
         print(response.json())
         tsslogging.tsslogit(response.json())
         os.environ['tssdoc']="1"
+
     
      ti = context['task_instance']
      ti.xcom_push(key="{}_RTD".format(sname), value="DONE")    
@@ -669,6 +670,8 @@ def generatedoc(**context):
       print("Cannot open file - ",e)  
       pass        
         
+     time.sleep(5)
+
      updatebranch(sname,"main")
      triggerbuild(sname)
         

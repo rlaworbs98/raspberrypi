@@ -11,6 +11,7 @@ import subprocess
 import tsslogging
 import shutil
 from git import Repo
+import time
 
 sys.dont_write_bytecode = True
 
@@ -656,29 +657,11 @@ def generatedoc(**context):
         print(response.json())
         tsslogging.tsslogit(response.json())
         os.environ['tssdoc']="1"
-    
+     time.sleep(5)
      ti = context['task_instance']
      ti.xcom_push(key="{}_RTD".format(sname), value="DONE")    
-     tsslogging.locallogs("ERROR", "STEP 10: Documentation successfully created. Check https://{}.readthedocs.io".format(sname))    
-     try:
-       sf = "" 
-       with open('/dagslocalbackup/logs.txt', "r") as f:
-            sf=f.read()
-       doparse("/{}/docs/source/logs.rst".format(sname), ["--logs--;{}".format(sf)])
-     except Exception as e:
-      print("Cannot open file - ",e)  
-      pass        
-        
      updatebranch(sname,"main")
      triggerbuild(sname)
         
     except Exception as e:
-     tsslogging.locallogs("ERROR", "STEP 10: There seems to an issue created the documentation.  Error={}".format(e))
-     try:
-       sf = "" 
-       with open('/dagslocalbackup/logs.txt', "r") as f:
-            sf=f.read()
-       doparse("/{}/docs/source/logs.rst".format(sname), ["--logs--;{}".format(sf)])
-     except Exception as e:
-      print("Cannot open file - ",e)  
-      pass
+     print("Error=",e)
